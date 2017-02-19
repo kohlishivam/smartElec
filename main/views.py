@@ -50,7 +50,6 @@ def dashboard(request):
     # return render(request,'chatbot/ersume.html',context_dict)
 
 
-
     return render(request,'main/examples/dashboard.html',context_dict)
 
 def user(request):
