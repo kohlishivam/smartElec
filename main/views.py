@@ -30,20 +30,57 @@ import random
 
 
 def dashboard(request):
-	LoginId = request.GET.get('LoginId')
-	return render(request,'main/examples/dashboard.html')
+
+    username=request.GET.get("name")
+    v=User.objects.get(name=username)
+    # print user_object1
+    user_object2= v.pk
+    # UserTransaction.objects.create(user=pk,numberTransactionUnits=units)
+    u=UserTransaction.objects.get_or_create(user=user_object2)[0]
+    exact = exactPrice2()
+
+
+    context_dict = {}
+    context_dict['units'] = u.numberTransactionUnits 
+    context_dict['name'] = v.name
+    # context_dict['bill'] = bill
+
+    context_dict['exact'] = exact
+ 
+    # return render(request,'chatbot/ersume.html',context_dict)
+
+
+
+    return render(request,'main/examples/dashboard.html',context_dict)
+
+def user(request):
+    username=request.GET.get("name")
+    v=User.objects.get(name=username)
+    user_object2= v.pk
+
+
+    u=UserTransaction.objects.get_or_create(user=user_object2)[0]
+    exact = exactPrice2()
+    context_dict = {}
+    context_dict['units'] = u.numberTransactionUnits
+    context_dict['name'] = v.name
+    context_dict['exact'] = exact
+    return render(request,'main/examples/user.html',context_dict)    
+
+
+
 
 def table(request):
-	return render(request,'main/examples/table.html')
+    return render(request,'main/examples/table.html')
 
 def notifications(request):
-	return render(request,'main/examples/notifications.html')
+    return render(request,'main/examples/notifications.html')
 
 def typography(request):
-	return render(request,'main/examples/typography.html')
+    return render(request,'main/examples/typography.html')
 
 def start(request):
-	return render(request,'main/upload.html')
+    return render(request,'main/upload.html')
 
 def exactPrice(request):
     r=requests.get("http://www.vidyutpravah.in/")
@@ -54,6 +91,14 @@ def exactPrice(request):
     eprice = a + b + float(price)
     return HttpResponse(json.dumps({"price":eprice},indent=4))
 
+def exactPrice2():
+    r=requests.get("http://www.vidyutpravah.in/")
+    soup=bs4.BeautifulSoup(r.text,"html.parser")
+    price=soup.find_all("span",class_="counter")[12].text
+    a = random.random()
+    b = random.random()
+    eprice = a + b + float(price)
+    return eprice
 
 
 
@@ -241,6 +286,44 @@ def userInfo(request):
     print user_object
     output=json.dumps(user_object[0],indent=4)
     return HttpResponse(output,content_type="application/json")
+
+
+def user_transactions(request):
+    username=request.GET.get("name")
+    v=User.objects.get(name=username)
+    # print user_object1
+    user_object2= v.pk
+    user_object=UserTransaction.objects.filter(user=user_object2).values()
+    print user_object
+    output=json.dumps(user_object[0],indent=4)
+    return HttpResponse(output,content_type="application/json")
+
+def user_transactions_update(request):
+    units=request.GET.get("units")
+    username=request.GET.get("name")
+    v=User.objects.get(name=username)
+    # print user_object1
+    user_object2= v.pk
+    # UserTransaction.objects.create(user=pk,numberTransactionUnits=units)
+    u=UserTransaction.objects.get_or_create(user=user_object2)[0]
+    x = int(u.numberTransactionUnits)
+    u.numberTransactionUnits = x + int(units)
+    print x
+    print units
+    u.save()
+    name = username
+    unit = u.numberTransactionUnits
+
+    c = {"name": name, "units":unit}
+
+
+
+    response_obj = json.dumps(c ,indent = 4)
+
+    return HttpResponse(response_obj,content_type="application/json")
+
+
+
 
 
 

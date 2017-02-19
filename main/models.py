@@ -12,7 +12,7 @@ class User(models.Model):
 	 	return self.name
 
 class UserTransaction(models.Model):
-	transactionid=models.IntegerField(default=0,unique=True)
+	transactionid=models.CharField(max_length=256,default=0,unique=True)
 	transactionUnitAmount=models.IntegerField(default=0)
 	numberTransactionUnits=models.IntegerField(default=0)
 	transactionUserId=models.IntegerField(default=0)
