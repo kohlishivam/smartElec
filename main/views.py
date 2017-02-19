@@ -306,18 +306,23 @@ def user_transactions_update(request):
     # UserTransaction.objects.create(user=pk,numberTransactionUnits=units)
     u=UserTransaction.objects.get_or_create(user=user_object2)[0]
     x = int(u.numberTransactionUnits)
-    u.numberTransactionUnits = x + int(units)
+    print units
+    unit  = units.strip().split('/')
+    print unit
+    units1 = unit[0]
+    u.numberTransactionUnits = x + int(units1)
     print x
     print units
     u.save()
     name = username
-    unit = u.numberTransactionUnits
+    unit3 = u.numberTransactionUnits
 
-    c = {"name": name, "units":unit}
+    c = {"name": name, "units":unit3}
 
 
 
     response_obj = json.dumps(c ,indent = 4)
+    # return HttpResponse(unit[0])
 
     return HttpResponse(response_obj,content_type="application/json")
 
